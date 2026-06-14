@@ -109,6 +109,7 @@ pub mod bitboard;
 pub mod board;
 pub mod fen;
 pub mod packed;
+pub mod retrograde;
 pub mod san;
 pub mod uci;
 pub mod zobrist;
@@ -127,6 +128,7 @@ pub use position::{
     PositionErrorKinds,
 };
 pub use role::{ByRole, Role};
+pub use retrograde::{Retrograde, RetrogradeAnalysis, CastlingRetrogradeMode};
 pub use setup::{Castles, Setup};
 pub use square::{File, ParseSquareError, Rank, Square};
 pub use types::{CastlingMode, EnPassantMode, Piece, RemainingChecks};
