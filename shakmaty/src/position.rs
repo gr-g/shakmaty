@@ -1043,6 +1043,38 @@ impl Chess {
             fullmoves: NonZeroU32::MIN,
         }
     }
+
+    /// Constructs a position without validating the board or en passant square.
+    ///
+    /// The caller must ensure the setup is suitable for standard chess operations:
+    /// in particular, it must have exactly one king per color, no pawns on the
+    /// backranks, no opposite check, and a structurally valid en passant square.
+    /// Invalid setups may cause subsequent operations to panic or return incorrect
+    /// results.
+    ///
+    /// Castling state is derived as in [`FromSetup::from_setup()`], discarding
+    /// invalid castling rights. The en passant square is stored as supplied,
+    /// without checking its rank, the pushed pawn, or the empty transit and
+    /// origin squares.
+    ///
+    /// This is an extension for callers that already establish these invariants.
+    /// Use [`FromSetup::from_setup()`] for untrusted setups.
+    pub fn from_setup_unchecked(setup: Setup, mode: CastlingMode) -> Chess {
+        let castles = if setup.castling_rights.is_empty() {
+            Castles::empty(mode)
+        } else {
+            Castles::from_setup(&setup, mode).unwrap_or_else(|castles| castles)
+        };
+
+        Chess {
+            board: setup.board,
+            turn: setup.turn,
+            castles,
+            ep_square: setup.ep_square.map(EnPassant),
+            halfmoves: setup.halfmoves,
+            fullmoves: setup.fullmoves,
+        }
+    }
 }
 
 impl Default for Chess {
